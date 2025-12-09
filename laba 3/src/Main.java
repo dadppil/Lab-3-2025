@@ -4,11 +4,17 @@ public class Main {
         try {
             // Тестирование ArrayTabulatedFunction
             System.out.println("=== Тестирование ArrayTabulatedFunction ===");
-            testTabulatedFunction(new ArrayTabulatedFunction(0, 5, 3));
+            testTabulatedFunction(new ArrayTabulatedFunction(1, 7, 7));
 
             // Тестирование LinkedListTabulatedFunction
             System.out.println("\n=== Тестирование LinkedListTabulatedFunction ===");
-            testTabulatedFunction(new LinkedListTabulatedFunction(0, 5, 3));
+            testTabulatedFunction(new LinkedListTabulatedFunction(1, 6, 6));
+            double[] values = new double[10];
+            for(int i = 0; i<10;i++){
+                values[i] = Math.random()*(100.0-1.0)+1.0;
+            }
+            System.out.println("\n=== Тестирование объекта TabulatedFunction с различными значениями y ===");
+            testTabulatedFunction(new LinkedListTabulatedFunction(1,10,values));
 
             // Тестирование исключений
             System.out.println("\n=== Тестирование исключений ===");
@@ -31,11 +37,19 @@ public class Main {
         try {
             // Добавление точки
             function.addPoint(new FunctionPoint(2.5, 6.25));
-            System.out.println("После добавления точки (2.5; 6.25): " + function);
-
+            System.out.println("После добавления точки (2.5; 6.25): ");
+            function.showPoints();
             // Изменение точки
             function.setPointY(2, 10.0);
-            System.out.println("После изменения Y точки 2: " + function);
+            System.out.println("После изменения Y точки 2: ");
+            function.showPoints();
+
+            function.deletePoint(1);
+            System.out.println("После удаления точки 1: ");
+            function.showPoints();
+            function.setPointX(1, 1.5);
+            System.out.println("После изменения X точки 2: ");
+            function.showPoints();
 
         } catch (InappropriateFunctionPointException e) {
             System.out.println("Исключение при работе с точкой: " + e.getMessage());

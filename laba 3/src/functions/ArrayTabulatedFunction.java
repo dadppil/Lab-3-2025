@@ -74,7 +74,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction {
     }
     public void showPoints(){
         for (int i = 0; i<pointsCount;i++){
-            System.out.print("Значение точки "+ (i+1) + ": ");
+            System.out.print("Значение точки "+ (i) + ": ");
             points[i].showPoint();
             System.out.println();
         }
@@ -94,7 +94,8 @@ public class ArrayTabulatedFunction implements TabulatedFunction {
                 throw new InappropriateFunctionPointException("Координата x задаваемой точки лежит вне интервала, определяемого значениями соседних точек табулированной функции");
             }
         }
-        points[index] = point;
+        points[index].setX(point.getX());
+        points[index].setY(point.getY());
     }
     public double getPointX(int index){
         if (index < 0 || index >= pointsCount) {
@@ -111,9 +112,19 @@ public class ArrayTabulatedFunction implements TabulatedFunction {
             if (x < getLeftDomainBorder() || x > getRightDomainBorder()) {
                 throw new InappropriateFunctionPointException("Координата x задаваемой точки лежит вне интервала");
             }
-            if (x >= points[index + 1].getX() || x <= points[index - 1].getX()) {
+            if(index == pointsCount-1 && x <= points[index - 1].getX()){
                 throw new IllegalArgumentException("Новое значение x нарушает упорядоченность");
             }
+            if(index == 0 && x >= points[index + 1].getX()){
+
+                throw new IllegalArgumentException("Новое значение x нарушает упорядоченность");
+            }
+            if(index!=0&&index!=pointsCount-1){
+            if ( x >= points[index + 1].getX() || x <= points[index - 1].getX()) {
+            throw new IllegalArgumentException("Новое значение x нарушает упорядоченность");
+                }
+            }
+
         }
         points[index].setX(x);
     }

@@ -147,29 +147,34 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         if (x < getLeftDomainBorder() || x > getRightDomainBorder()) {
             return Double.NaN;
         }
+        FunctionNode Ipoint = head.next;
         for (int i = 0; i < pointsCount; i++){
-            if (Math.abs(getNodeByIndex(i).point.getX() - x) <= EPSILON) {
-                return getNodeByIndex(i).point.getY();
+            if (Math.abs(Ipoint.point.getX() - x) <= EPSILON) {
+                return Ipoint.point.getY();
             }
+            Ipoint = Ipoint.next;
         }
+        Ipoint = head.next;
         for (int i = 0; i < pointsCount - 1; i++) {
-            if (x >= getNodeByIndex(i).point.getX() && x <= getNodeByIndex(i+1).point.getX()) {
-                double leftX = getNodeByIndex(i).point.getX();
-                double rightX = getNodeByIndex(i+1).point.getX();
-                double leftY = getNodeByIndex(i).point.getY();
-                double rightY = getNodeByIndex(i+1).point.getY();
+            if (x >= Ipoint.point.getX() && x <= Ipoint.next.point.getX()) {
+                double leftX = Ipoint.point.getX();
+                double rightX = Ipoint.next.point.getX();
+                double leftY = Ipoint.point.getY();
+                double rightY = Ipoint.next.point.getY();
 
 
                 return leftY + (rightY - leftY) * (x - leftX) / (rightX - leftX);
             }
+            Ipoint = Ipoint.next;
         }
 
 
         return Double.NaN;
     }
+
     public void showPoints(){
         for (int i = 0; i<pointsCount;i++){
-            System.out.print("Значение точки "+ (i+1) + ": ");
+            System.out.print("Значение точки "+ (i) + ": ");
             getNodeByIndex(i).point.showPoint();
             System.out.println();
         }
@@ -189,7 +194,8 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
                 throw new InappropriateFunctionPointException("Координата x задаваемой точки лежит вне интервала, определяемого значениями соседних точек табулированной функции");
             }
         }
-        getNodeByIndex(index).point = point;
+        getNodeByIndex(index).point.setX(point.getX());
+        getNodeByIndex(index).point.setY(point.getY());
     }
     public double getPointX(int index){
         if (index < 0 || index >= pointsCount) {
@@ -206,8 +212,16 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
             if (x < getLeftDomainBorder() || x > getRightDomainBorder()) {
                 throw new InappropriateFunctionPointException("Координата x задаваемой точки лежит вне интервала");
             }
-            if (x >= getNodeByIndex(index+1).point.getX() || x <= getNodeByIndex(index+1).point.getX()) {
+            if(index == 0 && x >= getNodeByIndex(index+1).point.getX()){
                 throw new IllegalArgumentException("Новое значение x нарушает упорядоченность");
+            }
+            if (x <= getNodeByIndex(index-1).point.getX() && index == pointsCount-1){
+                throw new IllegalArgumentException("Новое значение x нарушает упорядоченность");
+            }
+            if(index>0&&index<pointsCount-1){
+            if (x >= getNodeByIndex(index+1).point.getX() || x <= getNodeByIndex(index-1).point.getX()) {
+                throw new IllegalArgumentException("Новое значение x нарушает упорядоченность");
+                }
             }
         }
         getNodeByIndex(index).point.setX(x);
