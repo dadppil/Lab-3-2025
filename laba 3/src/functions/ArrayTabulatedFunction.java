@@ -1,7 +1,7 @@
 package functions;
 public class ArrayTabulatedFunction implements TabulatedFunction {
     private FunctionPoint[] points;
-    final double EPSILON = 2.220446049250326E-16;
+    private static final double EPSILON = Math.ulp(1.0);
     private int pointsCount;
     public ArrayTabulatedFunction(double leftX, double rightX, int pointsCount){
         if (pointsCount < 2) {

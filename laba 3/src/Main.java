@@ -44,11 +44,14 @@ public class Main {
             System.out.println("После изменения Y точки 2: ");
             function.showPoints();
 
-            function.deletePoint(1);
-            System.out.println("После удаления точки 1: ");
+            function.deletePoint(0);
+            System.out.println("После удаления точки 0: ");
             function.showPoints();
-            function.setPointX(1, 1.5);
+            function.setPointX(2, 1.5);
             System.out.println("После изменения X точки 2: ");
+            function.showPoints();
+            function.addPoint(new FunctionPoint(1,5));
+            System.out.println("После добавления точки (1; 5): ");
             function.showPoints();
 
         } catch (InappropriateFunctionPointException e) {

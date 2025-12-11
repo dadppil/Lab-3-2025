@@ -15,7 +15,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
     private int pointsCount;
     private FunctionNode lastAccessedNode;
     private int lastAccessedIndex;
-    private static final double EPSILON = 2.220446049250326E-16;
+    private static final double EPSILON = Math.ulp(1.0);
 
     public LinkedListTabulatedFunction(double leftX, double rightX, int pointsCount) {
         if (pointsCount < 2) {
@@ -173,10 +173,12 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
     }
 
     public void showPoints(){
+        FunctionNode node = head.next;
         for (int i = 0; i<pointsCount;i++){
             System.out.print("Значение точки "+ (i) + ": ");
-            getNodeByIndex(i).point.showPoint();
+            node.point.showPoint();
             System.out.println();
+            node = node.next;
         }
     }
     public FunctionPoint getPoint(int index){
@@ -194,8 +196,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
                 throw new InappropriateFunctionPointException("Координата x задаваемой точки лежит вне интервала, определяемого значениями соседних точек табулированной функции");
             }
         }
-        getNodeByIndex(index).point.setX(point.getX());
-        getNodeByIndex(index).point.setY(point.getY());
+        getNodeByIndex(index).point = new FunctionPoint(point);
     }
     public double getPointX(int index){
         if (index < 0 || index >= pointsCount) {
@@ -204,27 +205,29 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
         return getNodeByIndex(index).point.getX();
     }
     public void setPointX(int index, double x) throws InappropriateFunctionPointException{
-        {
+
+
 
             if (index < 0 || index >= pointsCount) {
                 throw new FunctionPointIndexOutOfBoundsException("Индекс выходит за границы массива точек");
             }
+            FunctionNode node = getNodeByIndex(index);
             if (x < getLeftDomainBorder() || x > getRightDomainBorder()) {
                 throw new InappropriateFunctionPointException("Координата x задаваемой точки лежит вне интервала");
             }
-            if(index == 0 && x >= getNodeByIndex(index+1).point.getX()){
+            if(index == 0 && x >= node.next.point.getX()){
                 throw new IllegalArgumentException("Новое значение x нарушает упорядоченность");
             }
-            if (x <= getNodeByIndex(index-1).point.getX() && index == pointsCount-1){
+            if (x <= node.prev.point.getX() && index == pointsCount-1){
                 throw new IllegalArgumentException("Новое значение x нарушает упорядоченность");
             }
             if(index>0&&index<pointsCount-1){
-            if (x >= getNodeByIndex(index+1).point.getX() || x <= getNodeByIndex(index-1).point.getX()) {
+            if (x >= node.next.point.getX() || x <= node.prev.point.getX()) {
                 throw new IllegalArgumentException("Новое значение x нарушает упорядоченность");
                 }
-            }
+
         }
-        getNodeByIndex(index).point.setX(x);
+        node.point.setX(x);
     }
     public double getPointY(int index){
         if (index < 0 || index >= pointsCount) {
@@ -253,17 +256,21 @@ public class LinkedListTabulatedFunction implements TabulatedFunction {
     }
     public void addPoint(FunctionPoint point)throws InappropriateFunctionPointException {
         {
+            FunctionNode node = head.next;
             int insertIndex = 0;
-            while (insertIndex < pointsCount && point.getX() > getNodeByIndex(insertIndex).point.getX()) {
+            while (insertIndex < pointsCount && point.getX() > node.point.getX()) {
                 insertIndex++;
+                node = node.next;
             }
-            if (insertIndex < pointsCount && (Math.abs(point.getX() - getNodeByIndex(insertIndex).point.getX()) <= EPSILON)) {
+            if (insertIndex < pointsCount && (Math.abs(point.getX() - node.point.getX()) <= EPSILON)) {
                 throw new InappropriateFunctionPointException("Точка с x=" + point.getX() + " уже существует");
             }
         }
+        FunctionNode node = head.next;
         int insertIndex = 0;
-        while (insertIndex < pointsCount && point.getX() > getNodeByIndex(insertIndex).point.getX()) {
+        while (insertIndex < pointsCount && point.getX() > node.point.getX()) {
             insertIndex++;
+            node = node.next;
         }
         addNodeByIndex(insertIndex).point = new FunctionPoint(point);
     }
